@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.venv/
+
+# Lean build output (the fixture is built by the tests)
+.lake/
+tests/fixture/.lake/
+tests/fixture/lake-manifest.json
+
+# local audit output
+*_results.json
+overload_guard.log
+overload_guard.pid
