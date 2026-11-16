@@ -117,7 +117,7 @@ def test_deduplicate_counts_each_name_once():
 @pytest.fixture(scope="module")
 def built_fixture() -> Path:
     env = project_env(FIXTURE)
-    p = subprocess.run(["lake", "build"], cwd=FIXTURE, env=env,
+    p = subprocess.run(["lake", "build"], cwd=FIXTURE, env=env, check=False,
                        capture_output=True, text=True, timeout=900)
     assert lib_dir(FIXTURE) is not None, f"fixture failed to build:\n{p.stdout}\n{p.stderr}"
     return FIXTURE

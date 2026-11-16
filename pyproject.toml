@@ -38,6 +38,19 @@ artifacts = ["proof_census/audit.lean"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py310"
+
+# Pin the rule set explicitly: ruff changes its defaults between releases, and CI installs
+# the newest version, so an unpinned selection makes the lint step fail on upgrades alone.
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "PL"]
+ignore = ["PLR0913"]  # audit_project legitimately takes several keyword options
+
+[tool.ruff.lint.per-file-ignores]
+# Asserting against literal expected counts is the whole point of these tests.
+"tests/*" = ["PLR2004"]
+# main() is a flat sequence of argument handling and reporting branches, not nested logic.
+"proof_census/cli.py" = ["PLR0912"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

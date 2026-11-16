@@ -44,17 +44,19 @@ def find_projects(roots: list[Path], max_depth: int = 4) -> list[Path]:
     its theorems belong to its own authors, not to yours.
     """
     found: list[Path] = []
-    for root in roots:
-        root = root.resolve()
-        if is_lean_project(root):
-            found.append(root)
+    for given in roots:
+        base = given.resolve()
+        if is_lean_project(base):
+            found.append(base)
             continue
-        for dirpath, dirnames, _ in os.walk(root):
-            depth = len(Path(dirpath).relative_to(root).parts)
+        for dirpath, dirnames, _ in os.walk(base):
+            depth = len(Path(dirpath).relative_to(base).parts)
             if depth >= max_depth:
                 dirnames[:] = []
                 continue
-            dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS and not d.startswith("."))
+            dirnames[:] = sorted(
+                d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")
+            )
             here = Path(dirpath)
             if is_lean_project(here):
                 found.append(here)
@@ -106,7 +108,7 @@ def project_env(root: Path) -> dict[str, str]:
 def run(cmd: list[str], cwd: Path, timeout: int) -> tuple[int, str, str]:
     try:
         p = subprocess.run(
-            cmd, cwd=cwd, env=project_env(cwd),
+            cmd, cwd=cwd, env=project_env(cwd), check=False,
             capture_output=True, text=True, timeout=timeout,
         )
         return p.returncode, p.stdout, p.stderr
@@ -148,7 +150,7 @@ def lib_dir(root: Path) -> Path | None:
         d = root / cand
         if not d.is_dir():
             continue
-        for dirpath, _, files in os.walk(d):
+        for _dirpath, _dirnames, files in os.walk(d):
             if any(f.endswith(".olean") for f in files):
                 return d
     return None
