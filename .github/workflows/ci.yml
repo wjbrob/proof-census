@@ -25,10 +25,12 @@ jobs:
             | sh -s -- -y --default-toolchain none
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
-      - name: Show the toolchain the fixture pins
+      - name: Install the toolchain the fixture pins
+        # Run inside the fixture: elan resolves the version from its lean-toolchain file.
+        # At the repo root there is no lean-toolchain and no default toolchain, so lake exits 1.
+        working-directory: tests/fixture
         run: |
-          export PATH="$HOME/.elan/bin:$PATH"
-          cat tests/fixture/lean-toolchain
+          cat lean-toolchain
           lake --version
 
       - name: Install the package
